@@ -14,7 +14,7 @@ Le résultats de l'expérience sont présentés ci-dessous, avec les notations s
 - r est le nombre de graines ayant germé parmi ces n graines.
 - r/n est la proportion de graines ayant germé.
 
-![test](datatable.jpg)
+![test](images\datatable.jpg)
  *Figure 1 : Tableau récapitulatif de l'expérience*
 
  ## Modèle utilisé
@@ -35,12 +35,47 @@ En effet, la probabilité $p_i$ dépend bien évidemment du type des graine et d
 Enfin, le terme $b_i$ est un effet aléatoire visant à modéliser une légère variabilité des conditions d'une assiette à l'autre (température, lumière, assiette en elle même).
 
 N'ayant pas de connaissances sur les $\alpha$ ni sur $\tau$, nous utilisons des lois a priori non informatives :
-- $\alpha_{1}$, $\alpha_{2}$, $\alpha_{12}$ $\sim Normal(0,\sigma_0^2)$ avec $\sigma_0$ grand.
-- $\tau \sim Inverse Gamma(\alpha_0, \beta_0)$. On choisit une inverse gamma parce que c'est la loi conjuguée pour l'estimation de la variance d'une loi normale dont l'espérance est connue. De plus, c'est une loi à valeurs positives, tout comme $\tau$ qui est une variance.
+- $\alpha_{0}$, $\alpha_{1}$, $\alpha_{2}$, $\alpha_{12}$ $\sim Normal(0,\sigma_0^2)$ avec $\sigma_0$ grand.
+- $\tau \sim Inverse Gamma(a,b)$. On choisit une inverse gamma parce que c'est la loi conjuguée pour l'estimation de la variance d'une loi normale dont l'espérance est connue. De plus, c'est une loi à valeurs positives, tout comme $\tau$ qui est une variance.
 
 On obtient finalement le modèle suivant :
 
-![test](graphe_model.jpg)
+![test](images\graphe_model.jpg)
  *Figure 2 : Graphe du modèle pour l'expérience seeds*
 
  ## Echantilloneur de Gibbs et Metropolis Hastings
+
+ Nous utilisons un échantillonneur de Gibbs afin de simuler les lois associées aux variables du modèle. 
+
+ Pour cela, nous devons d'abord déterminer les lois conditionnelles qui seront utilisées afin de mettre à jour chaque variable :
+
+ - Loi des $\alpha$
+
+ $\pi\left(\alpha_0 \mid r, \alpha_1, \alpha_2, \alpha_{12}, b, \tau\right) \propto \pi(\alpha) \cdot \pi\left(r\mid \alpha_0, \alpha_1, \alpha_2, \alpha_{12}, b)\right. $
+
+$\pi\left(\alpha_0 \mid r, \alpha_1, \alpha_2, \alpha_{12}, b, \tau\right) \propto \pi(\alpha) \cdot \prod_{i=1}^{N} \pi\left(r_{i}\mid \alpha_0, \alpha_1, \alpha_2, \alpha_{12}, b)\right. $
+
+$\pi\left(\alpha_0 \mid r, \alpha_1, \alpha_2, \alpha_{12}, b, \tau\right) \propto \exp \left(-\frac{\alpha_{0}^{2}}{\sigma_0^2}\right) \prod_{i=1}^{N}\left(p_{i}\right)^{r_{i}}\left(1-p_{i}\right)^{n_{i}-r_{i}} $
+
+où $r$ et $b$ regroupent les observations des $r_i$ et des $b_i$ respectivement.
+
+La loi conditionnelle est la même pour $\alpha_{1}$, $\alpha_{2}$, $\alpha_{12}$, il suffit d'échanger les indices.
+
+- Loi de tau :
+
+$\pi\left(\tau \mid r, \alpha_0,  \alpha_1, \alpha_2, \alpha_{12}, b\right) \propto \pi(\tau) \cdot \prod_{i=1}^{N} \pi\left(b_{i}\mid \tau)\right. $
+
+$\tau \sim Inverse gamma(a,b)$ et $(b_i\mid \tau) \sim Normal(0, \tau)$.   
+La loi de $\tau$ est conjuguée et on obtient finalement $(\tau \mid r, \alpha_0,  \alpha_1, \alpha_2, \alpha_{12}, b) \sim Inverse Gamma(a^*, b^*)$, avec $a* = a + \frac{N}{2}$ et $b^* = b + \frac{1}{2} \cdot \sum_{i=1}^{N} b_i^2$
+
+- Loi des $b_i$ :
+
+Pour i dans 1,....,N  
+ $\pi\left(b_i \mid r,\alpha_0,  \alpha_1, \alpha_2, \alpha_{12}, \tau\right) \propto \pi(b_i \mid \tau) \cdot \pi\left(r_{i}\mid \alpha_0, \alpha_1, \alpha_2, \alpha_{12}, b_i)\right. $
+ $\pi\left(b_{i} \mid r,\alpha_0,  \alpha_1, \alpha_2, \alpha_{12}, \tau\right) \propto \exp \left(-\frac{b_{i}^{2}}{2 \tau}\right)\left(p_{i}\right)^{r_{i}}\left(1-p_{i}\right)^{n_{i}-r_{i}}$
+
+ Etant donné que nous ne pouvons pas échantillonner facilement à partir des lois conditionnelles des $\alpha$ et des $b_i$, nous utiliserons Metropolis Hastings :  
+ Pour ces paramètres, nous effectuons une proposition suivant une marche aléatoire $x^* = x_t + \epsilon$, où $\epsilon$ suit une loi normale centrée dont nous ajusterons la variance.  
+ Puis, la proposition est validée avec probabilité valant $min(1, \frac{g(x^*)}{g(x_t)})$, g étant la densité de la loi conditionnelle.
+
+ ## Résultats
