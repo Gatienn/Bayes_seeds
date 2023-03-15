@@ -51,11 +51,11 @@ On obtient finalement le modèle suivant :
 
  - Loi des $\alpha$
 
- $\pi\left(\alpha_0 \mid r, \alpha_1, \alpha_2, \alpha_{12}, b, \tau\right) \propto \pi(\alpha) \cdot \pi\left(r\mid \alpha_0, \alpha_1, \alpha_2, \alpha_{12}, b)\right. $
+ $\pi\left(\alpha_0 \mid r, \alpha_1, \alpha_2, \alpha_{12}, b, \tau\right) \propto \pi(\alpha_0) \cdot \pi\left(r\mid \alpha_0, \alpha_1, \alpha_2, \alpha_{12}, b)\right. $
 
-$\pi\left(\alpha_0 \mid r, \alpha_1, \alpha_2, \alpha_{12}, b, \tau\right) \propto \pi(\alpha) \cdot \prod_{i=1}^{N} \pi\left(r_{i}\mid \alpha_0, \alpha_1, \alpha_2, \alpha_{12}, b)\right. $
+$\pi\left(\alpha_0 \mid r, \alpha_1, \alpha_2, \alpha_{12}, b, \tau\right) \propto \pi(\alpha_0) \cdot \prod_{i=1}^{N} \pi\left(r_{i}\mid \alpha_0, \alpha_1, \alpha_2, \alpha_{12}, b)\right. $
 
-$\pi\left(\alpha_0 \mid r, \alpha_1, \alpha_2, \alpha_{12}, b, \tau\right) \propto \exp \left(-\frac{\alpha_{0}^{2}}{\sigma_0^2}\right) \prod_{i=1}^{N}\left(p_{i}\right)^{r_{i}}\left(1-p_{i}\right)^{n_{i}-r_{i}} $
+$\pi\left(\alpha_0 \mid r, \alpha_1, \alpha_2, \alpha_{12}, b, \tau\right) \propto \exp \left(-\frac{\alpha_{0}^{2}}{2\sigma_0^2}\right) \prod_{i=1}^{N}\left(p_{i}\right)^{r_{i}}\left(1-p_{i}\right)^{n_{i}-r_{i}} $
 
 où $r$ et $b$ regroupent les observations des $r_i$ et des $b_i$ respectivement.
 
@@ -79,3 +79,6 @@ Pour i dans 1,....,N
  Puis, la proposition est validée avec probabilité valant $min(1, \frac{g(x^*)}{g(x_t)})$, g étant la densité de la loi conditionnelle.
 
  ## Résultats
+
+ On commence par générer des chaînes de taille 10000 auxquelles on retire les 1000 première valeurs (burning).
+
