@@ -85,19 +85,23 @@ On élague ensuite les chaînes en ne conservant qu'une valeur sur 10, afin de l
 
 ![alpha](images\resultats_alpha.jpg)
 ![tau_b](images\resultats_tau_b.jpg)
+ *Figure 3 : Chaînes obtenues pour les alpha, tau et b0*
 
 Les chaînes obtenues semblent bien stationnaires. De plus, nous avons modifié les variances associées aux marches aléatoires afin d'obtenir un taux d'acceptation d'environ 0.3 pour tous les paramètres, ce qui est un taux standard pour ce type d'algorithme.
 
 Nous pouvons à présent calculer la moyenne et l'écart type pour les distributions des alpha et de tau, et les comparer aux valeurs obtenues dans le sujet pour ce même modèle :
 
 ![resultats](images\tableau_resultats.jpg)
+ *Figure 4 : Tableau des résultats pour les variables du modèle*
+
 Les écarts type obtenus sont tous légèrement supérieurs à ceux qui étaient attendus, à l'exception de celui pour tau.  
 En revanche, les valeurs moyennes sont très proches, dans le sens où l'écart entre le résultat que nous avons obtenu et celui du sujet est faible devant la valeur de l'écart type, et ce pour tous les paramètres.
 
 Enfin, nous pouvons calculer les probabilités de germination associées à chaque couple (type de graine, racine).  
 Pour cela, on calcule d'abord la chaîne des $p_i, i=1,...,N$, à partir des chaînes présentées ci-dessus, et ensuite seulement nous calculons leur moyenne et écarts types respectifs. Puis, on moyenne les valeurs obtenues pour chaque couple (type de graine, racine).
 
-![resultats_p](images\tableau_resultats_p.jpg)
+![resultats_p](images\tableau_resultats_p.jpg)  
+ *Figure 5 : Tableau des probabilités de germination*
 
 Les assiettes contenant des seed 73 ont globalement moins de graines que celles avec des seed 75. Il n'est donc pas surprenant d'obtenir de plus grands écarts types pour les seed 73.  
 L'information que nous pouvons tirer de ces résultats est que pour faire pousser des haricots, les deux types de graines sont similaires. Le couple haricot + seed 75 a une probabilité très légèrement inférieure de germer, mais le résultat est légèrement plus sûr en raison du plus faible écart type.  
