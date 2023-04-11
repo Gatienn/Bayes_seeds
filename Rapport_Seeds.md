@@ -14,7 +14,7 @@ Le résultats de l'expérience sont présentés ci-dessous, avec les notations s
 - r est le nombre de graines ayant germé parmi ces n graines.
 - r/n est la proportion de graines ayant germé.
 
-![test](images\datatable.jpg)
+![datatable](images\datatable.jpg)
  *Figure 1 : Tableau récapitulatif de l'expérience*
 
  ## Modèle utilisé
@@ -28,7 +28,7 @@ Autrement dit, la germination des graines sur l'assiette $i$ consiste en $n_i$ r
 Il s'en suit que $r_i \sim Binomiale(p_i, n_i)$.
 
 Les $p_i$ sont modélisés par la régression logistique suivante :  
-$logit(p_i) = \alpha_{0} + \alpha_{1}x_{1i} + \alpha_{2}x_{2i} + \alpha_{12}x_{1i}x_{2i} + b_i,\quad b_i \sim Normal(0,\tau)$,  
+$logit(p_i) = \alpha_{0} + \alpha_{1}x_{1i} + \alpha_{2}x_{2i} + \alpha_{12}x_{1i}x_{2i} + b_i,\quad b_i \sim Normal(0,\tau)$ (tau désignera la variance et non la précision),
 avec $x_{1i}$ le type de graine et $x_{2i}$ la racine sur l'assiette $i$. 
 
 En effet, la probabilité $p_i$ dépend bien évidemment du type des graine et de leur racine. De plus, le terme d'interaction $\alpha_{12}x_{1i}x_{2i}$ est ajouté afin de traduire l'effet de la combinaison entre les deux sur la germination.  
@@ -40,7 +40,7 @@ N'ayant pas de connaissances sur les $\alpha$ ni sur $\tau$, nous utilisons des 
 
 On obtient finalement le modèle suivant :
 
-![test](images\graphe_model.jpg)
+![graphe](images\graphe_model.jpg)
  *Figure 2 : Graphe du modèle pour l'expérience seeds*
 
  ## Echantilloneur de Gibbs et Metropolis Hastings
@@ -80,5 +80,25 @@ Pour i dans 1,....,N
 
  ## Résultats
 
- On commence par générer des chaînes de taille 10000 auxquelles on retire les 1000 première valeurs (burning).
+ On commence par générer des chaînes de taille 10000 auxquelles on retire les 1000 première valeurs (burning).  
+On élague ensuite les chaînes en ne conservant qu'une valeur sur 10, afin de limiter les éventuelles dépendances entre leurs états successifs (thining).
 
+![alpha](images\resultats_alpha.jpg)
+![tau_b](images\resultats_tau_b.jpg)
+
+Les chaînes obtenues semblent bien stationnaires. De plus, nous avons modifié les variances associées aux marches aléatoires afin d'obtenir un taux d'acceptation d'environ 0.3 pour tous les paramètres, ce qui est un taux standard pour ce type d'algorithme.
+
+Nous pouvons à présent calculer la moyenne et l'écart type pour les distributions des alpha et de tau, et les comparer aux valeurs obtenues dans le sujet pour ce même modèle :
+
+![resultats](images\tableau_resultats.jpg)
+Les écarts type obtenus sont tous légèrement supérieurs à ceux qui étaient attendus, à l'exception de celui pour tau.  
+En revanche, les valeurs moyennes sont très proches, dans le sens où l'écart entre le résultat que nous avons obtenu et celui du sujet est faible devant la valeur de l'écart type, et ce pour tous les paramètres.
+
+Enfin, nous pouvons calculer les probabilités de germination associées à chaque couple (type de graine, racine).  
+Pour cela, on calcule d'abord la chaîne des $p_i, i=1,...,N$, à partir des chaînes présentées ci-dessus, et ensuite seulement nous calculons leur moyenne et écarts types respectifs. Puis, on moyenne les valeurs obtenues pour chaque couple (type de graine, racine).
+
+![resultats_p](images\tableau_resultats_p.jpg)
+
+Les assiettes contenant des seed 73 ont globalement moins de graines que celles avec des seed 75. Il n'est donc pas surprenant d'obtenir de plus grands écarts types pour les seed 73.  
+L'information que nous pouvons tirer de ces résultats est que pour faire pousser des haricots, les deux types de graines sont similaires. Le couple haricot + seed 75 a une probabilité très légèrement inférieure de germer, mais le résultat est légèrement plus sûr en raison du plus faible écart type.  
+En revanche, la différence est plus nette pour le concombre : en raison d'un écart type plus faible et surtout d'une probabilité de germination beaucoup plus grande, il vaut mieux privilégier les graines seed 75. 
